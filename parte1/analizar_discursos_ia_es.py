@@ -1,4 +1,3 @@
-
 import re
 from collections import Counter
 from pathlib import Path
@@ -81,15 +80,21 @@ def normalizar_palabra(palabra: str) -> str:
 def construir_ngramas(tokens: list, n: int) -> list:
     return [tuple(tokens[i:i+n]) for i in range(len(tokens)-n+1)]
 
-def tabla_frecuencia_ngramas(tokens: list, n: int, top: int = 20) -> pd.DataFrame:
+def tabla_frecuencia_ngramas(tokens: list, n: int, top: int | None = 20) -> pd.DataFrame:
+    """
+    top=None (o cualquier valor <= 0) devuelve TODOS los n-gramas encontrados,
+    no solo los más frecuentes. Counter.most_common(None) ya devuelve todo
+    ordenado de mayor a menor, así que basta con no pasarle un número.
+    """
     grams = construir_ngramas(tokens, n)
     total = len(grams)
     counts = Counter(grams)
+    limite = None if (top is None or top <= 0) else top
     filas = [{
         "ngrama": " ".join(g),
         "frecuencia": c,
         "frecuencia_relativa": round(c/total, 5) if total else 0
-    } for g, c in counts.most_common(top)]
+    } for g, c in counts.most_common(limite)]
     return pd.DataFrame(filas)
 
 def ngramas_con_palabra_clave(tokens: list, n: int, palabra: str, top: int = 5) -> pd.DataFrame:
@@ -190,11 +195,15 @@ def main():
 
     out_dir = Path("resultados")
     out_dir.mkdir(exist_ok=True)
-    tabla_frecuencia_ngramas(todos_los_tokens,1,50).to_csv(out_dir/"unigramas.csv",index=False,encoding="utf-8-sig")
-    tabla_frecuencia_ngramas(todos_los_tokens,2,50).to_csv(out_dir/"bigramas.csv",index=False,encoding="utf-8-sig")
-    tabla_frecuencia_ngramas(todos_los_tokens,3,50).to_csv(out_dir/"trigramas.csv",index=False,encoding="utf-8-sig")
+    # top=None => TODOS los n-gramas del corpus, sin cortar en 50.
+    tabla_frecuencia_ngramas(todos_los_tokens,1,None).to_csv(out_dir/"unigramas_TODOS.csv",index=False,encoding="utf-8-sig")
+    tabla_frecuencia_ngramas(todos_los_tokens,2,None).to_csv(out_dir/"bigramas_TODOS.csv",index=False,encoding="utf-8-sig")
+    tabla_frecuencia_ngramas(todos_los_tokens,3,None).to_csv(out_dir/"trigramas_TODOS.csv",index=False,encoding="utf-8-sig")
     resumen.to_csv(out_dir/"resumen_por_tema.csv",index=False,encoding="utf-8-sig")
     print(f"\nTablas guardadas en: {out_dir.resolve()}")
+    print(f"  unigramas_TODOS.csv: {len(set(todos_los_tokens))} filas (vocabulario único)")
+    print(f"  bigramas_TODOS.csv:  {len(set(construir_ngramas(todos_los_tokens,2)))} filas")
+    print(f"  trigramas_TODOS.csv: {len(set(construir_ngramas(todos_los_tokens,3)))} filas")
 
 if __name__ == "__main__":
     main()

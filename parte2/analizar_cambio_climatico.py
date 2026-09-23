@@ -91,15 +91,17 @@ def construir_ngramas(tokens, n):
     return [tuple(tokens[i:i+n]) for i in range(len(tokens)-n+1)]
 
 def tabla_ngramas(tokens, n, top=20):
+    """top=None (o <= 0) devuelve TODOS los n-gramas, sin cortar."""
     grams = construir_ngramas(tokens, n)
     total = len(grams)
     counts = Counter(grams)
+    limite = None if (top is None or top <= 0) else top
 
     filas = [{
         "ngrama": " ".join(g),
         "frecuencia": c,
         "frecuencia_relativa": round(c / total, 5) if total else 0
-    } for g, c in counts.most_common(top)]
+    } for g, c in counts.most_common(limite)]
 
     return pd.DataFrame(filas)
 
@@ -252,24 +254,25 @@ def main():
     out_dir = Path(__file__).parent / "resultados_clima"
     out_dir.mkdir(exist_ok=True)
 
-    tabla_ngramas(tokens_a, 1, 50).to_csv(
-        out_dir / "A_unigramas.csv", index=False, encoding="utf-8-sig"
+    # top=None => TODOS los n-gramas encontrados en cada corpus, sin cortar.
+    tabla_ngramas(tokens_a, 1, None).to_csv(
+        out_dir / "A_unigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
-    tabla_ngramas(tokens_a, 2, 50).to_csv(
-        out_dir / "A_bigramas.csv", index=False, encoding="utf-8-sig"
+    tabla_ngramas(tokens_a, 2, None).to_csv(
+        out_dir / "A_bigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
-    tabla_ngramas(tokens_a, 3, 50).to_csv(
-        out_dir / "A_trigramas.csv", index=False, encoding="utf-8-sig"
+    tabla_ngramas(tokens_a, 3, None).to_csv(
+        out_dir / "A_trigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
 
-    tabla_ngramas(tokens_b, 1, 50).to_csv(
-        out_dir / "B_unigramas.csv", index=False, encoding="utf-8-sig"
+    tabla_ngramas(tokens_b, 1, None).to_csv(
+        out_dir / "B_unigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
-    tabla_ngramas(tokens_b, 2, 50).to_csv(
-        out_dir / "B_bigramas.csv", index=False, encoding="utf-8-sig"
+    tabla_ngramas(tokens_b, 2, None).to_csv(
+        out_dir / "B_bigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
-    tabla_ngramas(tokens_b, 3, 50).to_csv(
-        out_dir / "B_trigramas.csv", index=False, encoding="utf-8-sig"
+    tabla_ngramas(tokens_b, 3, None).to_csv(
+        out_dir / "B_trigramas_TODOS.csv", index=False, encoding="utf-8-sig"
     )
 
     df_terminos.to_csv(
