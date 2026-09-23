@@ -53,7 +53,7 @@ def main():
         return
 
     tokens = tokenizar(texto)
-    
+    print(tokens)
     print("=" * 60)
     print("ANALISIS LINGÜISTICO: STEVE JOBS - STANFORD")
     print("=" * 60)

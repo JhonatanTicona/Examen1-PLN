@@ -54,6 +54,7 @@ def main():
         return
 
     tokens = tokenizar_con_puntuacion(texto)
+    print(tokens)
     
     print("=" * 60)
     print("ANALISIS RETORICO: DISCURSO MARTIN LUTHER KING JR.")

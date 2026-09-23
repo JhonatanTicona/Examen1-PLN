@@ -154,7 +154,12 @@ def main():
 
     tokens_a = tokenizar(doc_a["texto"])
     tokens_b = tokenizar(doc_b["texto"])
+    print("Tokens Corpus A anterior")
+    print(tokens_a)
 
+    print()
+    print("Tokens Corpus B Reciente")
+    print(tokens_b)
     print(f"\nTokens corpus A: {len(tokens_a)}")
     print(f"Vocabulario único A: {len(set(tokens_a))}")
     print(f"Tokens corpus B: {len(tokens_b)}")

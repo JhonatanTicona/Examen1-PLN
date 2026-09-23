@@ -137,6 +137,7 @@ def main():
         d["tokens"] = tokenizar(d["texto"])
 
     todos_los_tokens = [tok for d in documentos for tok in d["tokens"]]
+    print(todos_los_tokens)
     print(f"\nTotal de tokens: {len(todos_los_tokens)}")
     print(f"Vocabulario unico: {len(set(todos_los_tokens))}")
 
